@@ -1,0 +1,58 @@
+unit uFrmCadClientes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, cxGraphics, cxLookAndFeels,
+  cxLookAndFeelPainters, Vcl.Menus, dxSkinsCore, dxSkinOffice2007Black,
+  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
+  dxSkinOffice2007Silver, cxControls, cxContainer, cxEdit, Vcl.StdCtrls,
+  cxGroupBox, cxButtons, Vcl.ExtCtrls;
+
+type
+  TfrmTeste = class(TForm)
+    pnlPrincipal: TPanel;
+    lblNome: TLabel;
+    lblIdentidade: TLabel;
+    lblCPF: TLabel;
+    lblTelefone: TLabel;
+    lblEmail: TLabel;
+    edtNome: TEdit;
+    edtIdentidade: TEdit;
+    cxBtnGravar: TcxButton;
+    cxBtnCancelar: TcxButton;
+    edtCPF: TEdit;
+    edtTelefone: TEdit;
+    EdtEmail: TEdit;
+    gbEndereço: TcxGroupBox;
+    lblCEP: TLabel;
+    lblPais: TLabel;
+    lblLogradouro: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label4: TLabel;
+    Label6: TLabel;
+    lblComplemento: TLabel;
+    edtCEP: TEdit;
+    Edit1: TEdit;
+    edtLogradouro: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Edit5: TEdit;
+    mmComplemento: TMemo;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmTeste: TfrmTeste;
+
+implementation
+
+{$R *.dfm}
+
+end.

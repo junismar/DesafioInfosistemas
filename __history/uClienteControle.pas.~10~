@@ -1,0 +1,232 @@
+unit uClienteControle;
+
+interface
+
+type
+  TClienteControle = class(TObject)
+
+  private
+    FNome: string;
+    FIdentidade: string;
+    FCPF: string;
+    FTelefone: string;
+    FEmail: string;
+    FEndereco: string;
+    FCep: string;
+    FLogradouro: string;
+    FNumero: Integer;
+    FComplemento: string;
+    FBairro: string;
+    FCidade: string;
+    FEstado: string;
+    FPais: string;
+
+  protected
+    function getNome: string;
+    procedure setNome(const value: string);
+
+    function getIdentidade: string;
+    procedure setIdentidade(const value: string);
+
+    function getCPF: string;
+    procedure setCPF(const value: string);
+
+    function getTelefone: string;
+    procedure setTelefone(const value: string);
+
+    function getEmail: string;
+    procedure setEmail(const value: string);
+
+    function getEndereco: string;
+    procedure setEndereco(const value: string);
+
+    function getCep: string;
+    procedure setCep(const value: string);
+
+    function getLogradouro: string;
+    procedure setLogradouro(const value: string);
+
+    function getNumero: Integer;
+    procedure setNumero(const value: Integer);
+
+    function getComplemento: string;
+    procedure setComplemento(const value: string);
+
+    function getBairro: string;
+    procedure setBairro(const value: string);
+
+    function getCidade: string;
+    procedure setCidade(const value: string);
+
+    function getEstado: string;
+    procedure setEstado(const value: string);
+
+    function getPais: string;
+    procedure setPais(const value: string);
+  public
+    property nome: string read getNome write setNome;
+    property identidade:  string read getIdentidade write setIdentidade;
+    property CPF:  string read getCPF write setCPF;
+    property Telefone:  string read getTelefone write setTelefone;
+    property Email:  string read getEmail write setEmail;
+    property Endereco:  string read getEndereco write setEndereco;
+    property Cep:  string read getCep write setCep;
+    property Logradouro:  string read getLogradouro write setLogradouro;
+    property Numero:  Integer read getNumero write setNumero;
+    property Complemento:  string read getComplemento write setComplemento;
+    property Bairro:  string read getBairro write setBairro;
+    property Cidade: string read getCidade write setCidade;
+    property Estado:  string read getEstado write setEstado;
+    property Pais:  string read getPais write setPais;
+  published
+end;
+
+implementation
+
+{ TClienteControle }
+
+
+
+{ TClienteControle }
+
+function TClienteControle.getBairro: string;
+begin
+  Result := FBairro;
+end;
+
+function TClienteControle.getCep: string;
+begin
+  Result := FCep;
+end;
+
+function TClienteControle.getCidade: string;
+begin
+  Result := FCidade;
+end;
+
+function TClienteControle.getComplemento: string;
+begin
+  Result := FComplemento;
+end;
+
+function TClienteControle.getCPF: string;
+begin
+  Result := FCPF;
+end;
+
+function TClienteControle.getEmail: string;
+begin
+  Result := FEmail;
+end;
+
+function TClienteControle.getEndereco: string;
+begin
+  Result := FEndereco;
+end;
+
+function TClienteControle.getEstado: string;
+begin
+  Result := FEstado;
+end;
+
+function TClienteControle.getIdentidade: string;
+begin
+  Result := FIdentidade;
+end;
+
+function TClienteControle.getLogradouro: string;
+begin
+  Result := FLogradouro;
+end;
+
+function TClienteControle.getNome: string;
+begin
+  Result := FNome;
+end;
+
+function TClienteControle.getNumero: Integer;
+begin
+  Result := Fn
+end;
+
+function TClienteControle.getPais: string;
+begin
+
+end;
+
+function TClienteControle.getTelefone: string;
+begin
+
+end;
+
+procedure TClienteControle.setBairro(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setCep(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setCidade(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setComplemento(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setCPF(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setEmail(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setEndereco(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setEstado(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setIdentidade(const value: string);
+begin
+  FIdentidade := value;
+end;
+
+procedure TClienteControle.setLogradouro(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setNome(const value: string);
+begin
+  FNome := value;
+end;
+
+procedure TClienteControle.setNumero(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setPais(const value: string);
+begin
+
+end;
+
+procedure TClienteControle.setTelefone(const value: string);
+begin
+
+end;
+
+end.

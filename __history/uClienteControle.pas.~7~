@@ -1,0 +1,64 @@
+unit uClienteControle;
+
+interface
+
+type
+  TClienteControle = class(TObject)
+
+  private
+    FNome: string;
+    FIdentidad: string;
+    FCPF: string;
+    FTelefone: string;
+    FEmail: string;
+    FEndereco: string;
+    FCep: string;
+    FLogradouro: string;
+    FNumero: Integer;
+    FComplemento: string;
+    FBairro: string;
+    FCidade: string;
+    FEstado: string;
+    FPais: string;
+
+  protected
+    function getNome: string;
+    procedure setNome(const value: string);
+
+  public
+    property nome: string read getNome write setNome;
+//    property Identidade:  string getIdentidade write setIdentidade;
+//    property CPF:  string getCPF write setCPF;
+//    property Telefone:  string getTelefone write setTelefone;
+//    property Email:  string getEmail write setEmail;
+//    property Endereco:  string getEndereco write setEndereco;
+//    property Cep:  string getCep write setCep;
+//    property Logradouro:  string getLogradouro write setLogradouro;
+//    property Numero:  Integer getNumero write setNumero;
+//    property Complemento:  string getComplemento write setComplemento;
+//    property Bairro:  string getBairro write setBairro;
+//    property Cidade: string getCidade write setCidade;
+//    property Estado:  string getEstado write setEstado;
+//    property Pais:  string getPais write setPais;
+  published
+end;
+
+implementation
+
+{ TClienteControle }
+
+
+
+{ TClienteControle }
+
+function TClienteControle.getNome: string;
+begin
+  Result := FNome;
+end;
+
+procedure TClienteControle.setNome(const value: string);
+begin
+  FNome := value;
+end;
+
+end.

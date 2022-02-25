@@ -1,0 +1,17 @@
+program DesafioInfoSistemas;
+
+uses
+  Vcl.Forms,
+  uFrmSistemas in 'uFrmSistemas.pas' {frmPrincipal},
+  uFrmCadCliente in 'uFrmCadCliente.pas' {frmCadCliente},
+  uClienteControle in 'uClienteControle.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
+  Application.CreateForm(TfrmCadCliente, frmCadCliente);
+  Application.Run;
+end.

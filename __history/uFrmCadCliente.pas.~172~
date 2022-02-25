@@ -1,0 +1,399 @@
+unit uFrmCadCliente;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Mask, Vcl.StdCtrls,
+  cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters, cxContainer,
+  cxEdit, dxSkinsCore, dxSkinOffice2007Silver,
+  cxGroupBox, dxSkinscxPCPainter, dxBarBuiltInMenu, cxPC, Vcl.Menus,
+  cxButtons, System.JSON, IPPeerClient, REST.Client, Data.Bind.Components,
+  Data.Bind.ObjectScope, REST.Authenticator.Simple, REST.Response.Adapter,
+  IdTCPConnection, IdTCPClient, IdHTTP, IdBaseComponent, IdComponent,
+  IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  uClienteControle, IdMessage, IdExplicitTLSClientServerBase,
+  IdMessageClient, IdSMTPBase, IdSMTP, IdAttachmentFile, IdText, IniFiles,
+  Xml.XMLDoc, Xml.XMLIntf;
+
+type
+  TfrmCadCliente = class(TForm)
+    pnlPrincipal: TPanel;
+    lblNome: TLabel;
+    lblIdentidade: TLabel;
+    lblCPF: TLabel;
+    lblTelefone: TLabel;
+    lblEmail: TLabel;
+    edtNome: TEdit;
+    edtIdentidade: TEdit;
+    edtTelefone: TEdit;
+    edtEmail: TEdit;
+    edtMaskCPF: TMaskEdit;
+    cxPageControl1: TcxPageControl;
+    tbsEndereco: TcxTabSheet;
+    tbsComplemento: TcxTabSheet;
+    lblCEP: TLabel;
+    edtCEP: TEdit;
+    lblLogradouro: TLabel;
+    edtLogradouro: TEdit;
+    edtNumero: TEdit;
+    lblNumero: TLabel;
+    lblBairro: TLabel;
+    edtBairro: TEdit;
+    edtCidade: TEdit;
+    lblPais: TLabel;
+    lblEstado: TLabel;
+    lblCidade: TLabel;
+    mmComplemento: TMemo;
+    btnGravar: TcxButton;
+    cxBtnCancelar: TcxButton;
+    cbEstado: TComboBox;
+    cbPais: TComboBox;
+    RESTClient: TRESTClient;
+    RESTRequest: TRESTRequest;
+    RESTResponse: TRESTResponse;
+    RESTResponseDataSetAdapter: TRESTResponseDataSetAdapter;
+    MemTable: TFDMemTable;
+    procedure cxBtnCancelarClick(Sender: TObject);
+    procedure edtCEPExit(Sender: TObject);
+    procedure btnGravarClick(Sender: TObject);
+    procedure edtMaskCPFExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+    procedure Gravar;
+    procedure LimparCampos;
+    procedure ValidarDados;
+
+    function GetCEP(vpCEP: string): TJSONObject;
+    function EnviarEmail(vpCliente: TClienteControle): Boolean;
+    function SalvarArqXml(vpCliente: TClienteControle): Boolean;
+    function getPathArquivoXML: string;
+  public
+
+  end;
+
+var
+  frmCadCliente: TfrmCadCliente;
+
+implementation
+
+uses
+  uRotinas;
+
+{$R *.dfm}
+
+const
+  C_BRASIL = 30;
+  C_ASSUNTO = 'Cadastro de Clientes!';
+
+procedure TfrmCadCliente.btnGravarClick(Sender: TObject);
+begin
+  ValidarDados;
+  Gravar;
+end;
+
+function TfrmCadCliente.getPathArquivoXML: string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + 'Cadastro.xml';
+end;
+
+procedure TfrmCadCliente.cxBtnCancelarClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmCadCliente.edtCEPExit(Sender: TObject);
+var
+  viJSON : string;
+begin
+  if Trim(edtCEP.Text) = '' then
+    Exit;
+
+  if TRotinas.RetornaNumero(edtCEP.Text).Length <> 8 then
+  begin
+    ShowMessage('CEP inválido!');
+    Exit;
+  end;
+
+  RESTRequest.Resource := TRotinas.RetornaNumero(edtCEP.Text) + '/json';
+  RESTRequest.Execute;
+
+  if RESTRequest.Response.StatusCode <> 200 then
+  begin
+    ShowMessage('Erro ao consultar CEP!');
+    Exit;
+  end;
+
+  if RESTRequest.Response.Content.IndexOf('erro') > 0 then
+    ShowMessage('CEP não encontrado!')
+  else
+  begin
+    viJSON := RESTResponse.JSONText;
+
+    edtLogradouro.Text := MemTable.FieldByName('logradouro').AsString;
+    edtNumero.Text     := '';
+    edtBairro.Text     := MemTable.FieldByName('bairro').AsString;
+    edtCidade.Text     := MemTable.FieldByName('localidade').AsString;
+    mmComplemento.Lines.Add(MemTable.FieldByName('complemento').AsString);
+    cbEstado.Text      := MemTable.FieldByName('uf').AsString;
+
+    // Pegar o objeto Json!
+
+
+  end;
+end;
+
+procedure TfrmCadCliente.edtMaskCPFExit(Sender: TObject);
+begin
+  if TRotinas.RetornaNumero(edtMaskCPF.Text).Length <> 11 then
+    Exit;
+
+  if not TRotinas.ValidarCPF(TRotinas.RetornaNumero(edtMaskCPF.Text)) then
+  begin
+    Application.MessageBox('Inserir um CPF válido!', 'Atenção', MB_OK);
+    edtMaskCPF.SetFocus;
+  end;
+end;
+
+function TfrmCadCliente.EnviarEmail(
+  vpCliente: TClienteControle): Boolean;
+var
+  viIniFile: TIniFile;
+  viFrom: string;
+  viBccList: string;
+  viHost: string;
+  viPort: Integer;
+  viUserName: string;
+  viPassword: string;
+  viArquivoAnexo: string;
+  viMsg: TIdMessage;
+  viText: TIdText;
+  viSMTP: TIdSMTP;
+  viIdSSLIOHandlerSocket: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  viPort := 0;
+
+  try
+    viIniFile  := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini');
+    try
+      viArquivoAnexo := getPathArquivoXML;
+
+      // Criação e leitura do arquivo INI com as configurações
+      viFrom     := vpCliente.Email;
+      viBccList  := viIniFile.ReadString('Email' , 'BccList'  , viBccList);
+      viHost     := viIniFile.ReadString('Email' , 'Host'     , viHost);
+      viPort     := viIniFile.ReadInteger('Email', 'Port'     , viPort);
+      viUserName := viIniFile.ReadString('Email' , 'UserName' , viUserName);
+      viPassword := viIniFile.ReadString('Email' , 'Password' , viPassword);
+
+      // Configura os parâmetros necessários para SSL
+      viIdSSLIOHandlerSocket                   := TIdSSLIOHandlerSocketOpenSSL.Create(Self);
+      viIdSSLIOHandlerSocket.SSLOptions.Method := sslvSSLv23;
+      viIdSSLIOHandlerSocket.SSLOptions.Mode   := sslmClient;
+
+      // Variável referente a mensagem
+      viMsg              := TIdMessage.Create(Self);
+      viMsg.CharSet      := 'utf-8';
+      viMsg.Encoding     := meMIME;
+      viMsg.From.Name    := C_ASSUNTO;
+      viMsg.From.Address := viFrom;
+      viMsg.Priority     := mpNormal;
+      viMsg.Subject      := C_ASSUNTO;
+
+      // Add Destinatário(s)
+      viMsg.Recipients.Add;
+      viMsg.Recipients.EMailAddresses := vpCliente.Email;
+      viMsg.CCList.EMailAddresses  := '';
+      viMsg.BccList.EMailAddresses := viBccList;
+      viMsg.BccList.EMailAddresses := ''; //Cópia Oculta
+
+      // Corpo da mensagem
+      viText := TIdText.Create(viMsg.MessageParts);
+      viText.ContentType := 'text/html';
+      viText.CharSet := 'ISO-8859-1';
+      viText.Body.Text :=
+      '<html>' +
+      '<head>' +
+      '<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">' +
+      '</head><body>' +
+      '<p><h3>Cadastro Realizado com Sucesso na InfoSistemas!</h3></p><br>' +
+      '<b>Nome:</b> ' + vpCliente.nome + '<br>' +
+      '<b>Identidade:</b> ' + vpCliente.identidade + '<br>' +
+      '<b>CPF:</b> ' + vpCliente.CPF + '<br>' +
+      '<b>Telefone:</b> ' + vpCliente.Telefone + '<br>' +
+      '<b>Email:</b> ' + vpCliente.Email + '<br>' +
+      '<b>CEP:</b> ' + vpCliente.Cep + '<br>' +
+      '<b>Pais:</b> ' + vpCliente.Pais + '<br>' +
+      '<b>Logradouro:</b> ' + vpCliente.Logradouro + '<br>' +
+      '<b>Número:</b> ' + IntToStr(vpCliente.Numero) + '<br>' +
+      '<b>Bairro:</b> ' + vpCliente.Bairro + '<br>' +
+      '<b>Cidade:</b> ' + vpCliente.Cidade + '<br>' +
+      '<b>Estado:</b> ' + vpCliente.Estado + '<br>' +
+      '</body>' +
+      '</html>';
+
+      // Prepara o Servidor
+      viSMTP            := TIdSMTP.Create(Self);
+      viSMTP.IOHandler  := viIdSSLIOHandlerSocket;
+      viSMTP.UseTLS     := utUseImplicitTLS;
+      viSMTP.AuthType   := satDefault;
+      viSMTP.Host       := viHost;
+      viSMTP.AuthType   := satDefault;
+      viSMTP.Port       := viPort;
+      viSMTP.Username   := viUserName;
+      viSMTP.Password   := viPassword;
+
+      // Conecta e Autentica
+      viSMTP.Connect;
+      viSMTP.Authenticate;
+
+      if (viArquivoAnexo <> EmptyStr) and (FileExists(viArquivoAnexo)) then
+        TIdAttachmentFile.Create(viMsg.MessageParts, viArquivoAnexo);
+
+      // Se a conexão foi bem sucedida, envia a mensagem
+      if viSMTP.Connected then
+      begin
+        try
+          viSMTP.Send(viMsg);
+        except on E:Exception do
+          begin
+            Application.MessageBox(PChar('Erro ao tentar enviar: ' + E.Message), 'Alerta', MB_OK);
+          end;
+        end;
+      end;
+
+      // Depois de tudo pronto, desconecta do servidor SMTP
+      if viSMTP.Connected then
+        viSMTP.Disconnect;
+
+      Result := True;
+    finally
+      viIniFile.Free;
+      UnLoadOpenSSLLibrary;
+
+      FreeAndNil(viMsg);
+      FreeAndNil(viIdSSLIOHandlerSocket);
+      FreeAndNil(viSMTP);
+    end;
+  except on e:Exception do
+    begin
+      Result := False;
+    end;
+  end;
+end;
+
+procedure TfrmCadCliente.FormShow(Sender: TObject);
+begin
+  cbPais.ItemIndex := C_BRASIL;
+end;
+
+function TfrmCadCliente.GetCEP(vpCEP: string): TJSONObject;
+begin
+  Result := nil;
+end;
+
+procedure TfrmCadCliente.Gravar;
+var
+  viCli: TClienteControle;
+begin
+  viCli := TClienteControle.Create;
+
+  try
+    viCli.nome := edtNome.Text;
+    viCli.identidade := edtIdentidade.Text;
+    viCli.CPF        := TRotinas.RetornaNumero(edtMaskCPF.Text);
+    viCli.Telefone   := edtTelefone.Text;
+    viCli.Email      := edtEmail.Text;
+    viCli.Cep        := edtCEP.Text;
+    viCli.Pais       := cbPais.Text;
+    viCli.Logradouro := edtLogradouro.Text;
+    viCli.Numero     := StrToInt(edtNumero.Text);
+    viCli.Bairro     := edtBairro.Text;
+    viCli.Cidade     := edtCidade.Text;
+    viCli.Estado     := cbEstado.Text;
+    viCli.Complemento := mmComplemento.Lines.ToString;
+
+    try
+      if SalvarArqXml(viCli) then
+        if EnviarEmail(viCli) then
+        begin
+          Application.MessageBox(
+            'Cadastro realizado com sucesso!' + sLineBreak +
+            'Foi enviado uma cópia de confirmação para seu email!', 'Alerta', MB_OK);
+          LimparCampos;
+        end;
+    except on E: Exception do
+      begin
+        Application.MessageBox(PChar(E.Message), 'Erro', MB_OK);
+      end;
+    end;
+  finally
+    viCli.Free;
+  end;
+end;
+
+procedure TfrmCadCliente.LimparCampos;
+begin
+  edtNome.Clear;
+  edtIdentidade.Clear;
+  edtMaskCPF.Clear;
+  edtTelefone.Clear;
+  edtEmail.Clear;
+  edtCEP.Clear;
+  cbPais.ItemIndex := C_BRASIL;
+  edtLogradouro.Clear;
+  edtNumero.Clear;
+  edtBairro.Clear;
+  edtCidade.Clear;
+  cbEstado.ItemIndex := -1;
+  mmComplemento.Lines.Clear;
+  edtNome.SetFocus;
+end;
+
+function TfrmCadCliente.SalvarArqXml(vpCliente: TClienteControle): Boolean;
+var
+  viPathArquivoXML: string;
+  XMLDocument: TXMLDocument;
+  NodeCep: IXMLNode;
+begin
+  XMLDocument := TXMLDocument.Create(Self);
+  try
+    XMLDocument.Active := True;
+    NodeCep := XMLDocument.AddChild('xmlcep');
+    NodeCep.ChildValues['cep']         := vpCliente.cep;
+    NodeCep.ChildValues['logradouro']  := vpCliente.Logradouro;
+    NodeCep.ChildValues['complemento'] := vpCliente.Complemento;
+    NodeCep.ChildValues['bairro']      := vpCliente.bairro;
+    NodeCep.ChildValues['localidade']  := vpCliente.cidade;
+    NodeCep.ChildValues['uf']          := vpCliente.Estado;
+    NodeCep.ChildValues['ibge']        := '';
+    NodeCep.ChildValues['gia']         := '';
+    NodeCep.ChildValues['ddd']         := '';
+    NodeCep.ChildValues['siafi']       := '';
+
+    viPathArquivoXML := getPathArquivoXML;
+
+    if FileExists(viPathArquivoXML) then
+      DeleteFile(viPathArquivoXML);
+
+    XMLDocument.SaveToFile(viPathArquivoXML);
+    Result := FileExists(viPathArquivoXML);
+  finally
+    XMLDocument.Free;
+  end;
+end;
+
+procedure TfrmCadCliente.ValidarDados;
+begin
+  if Trim(edtEmail.Text).IsEmpty then
+  begin
+    Application.MessageBox('Informe um endereço de email válido!', 'Alerta', MB_OK);
+    Abort;
+  end;
+
+end;
+
+end.

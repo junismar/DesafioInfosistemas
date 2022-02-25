@@ -1,0 +1,47 @@
+unit uFrmSistemas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls, uCEFWinControl, uCEFLinkedWinControlBase, uCEFChromiumWindow,
+  uCEFChromiumCore, uCEFChromium, uCEFWindowParent;
+
+type
+  TfrmPrincipal = class(TForm)
+    imgCadCliente: TImage;
+    Label1: TLabel;
+    Button1: TButton;
+    ChromiumWindow1: TChromiumWindow;
+    CEFWindowParent1: TCEFWindowParent;
+    Chromium1: TChromium;
+    procedure imgCadClienteClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+
+implementation
+
+uses
+  uFrmCadCliente;
+
+{$R *.dfm}
+
+procedure TfrmPrincipal.imgCadClienteClick(Sender: TObject);
+begin
+  Application.CreateForm(TfrmCadCliente, FrmCadCliente);
+
+  try
+    frmCadCliente.ShowModal;
+  finally
+    FreeAndNil(frmCadCliente);
+  end;
+end;
+
+end.

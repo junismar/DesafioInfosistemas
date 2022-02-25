@@ -1,0 +1,58 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, cxGraphics, cxControls, cxLookAndFeels,
+  cxLookAndFeelPainters, dxSkinsCore, dxSkinOffice2007Silver,
+  dxSkinscxPCPainter, dxBarBuiltInMenu, Vcl.Menus, Vcl.StdCtrls, cxButtons,
+  cxPC, Vcl.Mask, Vcl.ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    pnlPrincipal: TPanel;
+    lblNome: TLabel;
+    lblIdentidade: TLabel;
+    lblCPF: TLabel;
+    lblTelefone: TLabel;
+    lblEmail: TLabel;
+    edtNome: TEdit;
+    edtIdentidade: TEdit;
+    edtTelefone: TEdit;
+    edtEmail: TEdit;
+    edtMaskCPF: TMaskEdit;
+    cxPageControl1: TcxPageControl;
+    tbsEndereco: TcxTabSheet;
+    lblCEP: TLabel;
+    lblLogradouro: TLabel;
+    lblNumero: TLabel;
+    lblBairro: TLabel;
+    lblPais: TLabel;
+    lblEstado: TLabel;
+    lblCidade: TLabel;
+    edtCEP: TEdit;
+    edtLogradouro: TEdit;
+    edtNumero: TEdit;
+    edtBairro: TEdit;
+    edtCidade: TEdit;
+    cbEstado: TComboBox;
+    cbPais: TComboBox;
+    tbsComplemento: TcxTabSheet;
+    mmComplemento: TMemo;
+    btnGravar: TcxButton;
+    cxBtnCancelar: TcxButton;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+end.

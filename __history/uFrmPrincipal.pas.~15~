@@ -1,0 +1,42 @@
+unit uFrmPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls;
+
+type
+  TfrmPrincipal = class(TForm)
+    imgCadCliente: TImage;
+    Label1: TLabel;
+    procedure imgCadClienteClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+
+implementation
+
+uses
+  ufrmCadCliente;
+
+{$R *.dfm}
+
+procedure TfrmPrincipal.imgCadClienteClick(Sender: TObject);
+begin
+  Application.CreateForm(TfrmCadClientes, frmCadClientes);
+
+  try
+    frmCadClientes.ShowModal;
+  finally
+    FreeAndNil(frmCadClientes);
+  end;
+end;
+
+end.

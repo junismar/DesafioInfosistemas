@@ -1,0 +1,28 @@
+object frmPrincipal: TfrmPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Desafio InfoSistemas'
+  ClientHeight = 511
+  ClientWidth = 791
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsMDIForm
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  WindowState = wsMaximized
+  PixelsPerInch = 96
+  TextHeight = 13
+  object btnCadCliente: TButton
+    Left = 24
+    Top = 32
+    Width = 137
+    Height = 25
+    Caption = 'Cadastro de Clientes'
+    TabOrder = 0
+    OnClick = btnCadClienteClick
+  end
+end

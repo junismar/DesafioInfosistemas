@@ -1,0 +1,230 @@
+unit uViaCep;
+
+interface
+
+uses xmldom, XMLDoc, XMLIntf;
+
+type
+
+{ Forward Decls }
+
+  IXMLXmlcepType = interface;
+
+{ IXMLXmlcepType }
+
+  IXMLXmlcepType = interface(IXMLNode)
+    ['{F21E7FAC-036C-4E35-8CD4-EA5C8373D307}']
+    { Property Accessors }
+    function Get_Cep: Integer;
+    function Get_Logradouro: Integer;
+    function Get_Complemento: UnicodeString;
+    function Get_Bairro: Integer;
+    function Get_Localidade: Integer;
+    function Get_Uf: Integer;
+    function Get_Ibge: Integer;
+    function Get_Gia: UnicodeString;
+    function Get_Ddd: Integer;
+    function Get_Siafi: Integer;
+    procedure Set_Cep(Value: Integer);
+    procedure Set_Logradouro(Value: Integer);
+    procedure Set_Complemento(Value: UnicodeString);
+    procedure Set_Bairro(Value: Integer);
+    procedure Set_Localidade(Value: Integer);
+    procedure Set_Uf(Value: Integer);
+    procedure Set_Ibge(Value: Integer);
+    procedure Set_Gia(Value: UnicodeString);
+    procedure Set_Ddd(Value: Integer);
+    procedure Set_Siafi(Value: Integer);
+    { Methods & Properties }
+    property Cep: Integer read Get_Cep write Set_Cep;
+    property Logradouro: Integer read Get_Logradouro write Set_Logradouro;
+    property Complemento: UnicodeString read Get_Complemento write Set_Complemento;
+    property Bairro: Integer read Get_Bairro write Set_Bairro;
+    property Localidade: Integer read Get_Localidade write Set_Localidade;
+    property Uf: Integer read Get_Uf write Set_Uf;
+    property Ibge: Integer read Get_Ibge write Set_Ibge;
+    property Gia: UnicodeString read Get_Gia write Set_Gia;
+    property Ddd: Integer read Get_Ddd write Set_Ddd;
+    property Siafi: Integer read Get_Siafi write Set_Siafi;
+  end;
+
+{ Forward Decls }
+
+  TXMLXmlcepType = class;
+
+{ TXMLXmlcepType }
+
+  TXMLXmlcepType = class(TXMLNode, IXMLXmlcepType)
+  protected
+    { IXMLXmlcepType }
+    function Get_Cep: Integer;
+    function Get_Logradouro: Integer;
+    function Get_Complemento: UnicodeString;
+    function Get_Bairro: Integer;
+    function Get_Localidade: Integer;
+    function Get_Uf: Integer;
+    function Get_Ibge: Integer;
+    function Get_Gia: UnicodeString;
+    function Get_Ddd: Integer;
+    function Get_Siafi: Integer;
+    procedure Set_Cep(Value: Integer);
+    procedure Set_Logradouro(Value: Integer);
+    procedure Set_Complemento(Value: UnicodeString);
+    procedure Set_Bairro(Value: Integer);
+    procedure Set_Localidade(Value: Integer);
+    procedure Set_Uf(Value: Integer);
+    procedure Set_Ibge(Value: Integer);
+    procedure Set_Gia(Value: UnicodeString);
+    procedure Set_Ddd(Value: Integer);
+    procedure Set_Siafi(Value: Integer);
+  end;
+
+{ Global Functions }
+
+function Getxmlcep(Doc: IXMLDocument): IXMLXmlcepType;
+function Loadxmlcep(const FileName: string): IXMLXmlcepType;
+function Newxmlcep: IXMLXmlcepType;
+
+procedure SalvarArquivo(FileName: string; Registro : IXMLXmlcepType);
+
+const
+  TargetNamespace = '';
+
+implementation
+
+{ Global Functions }
+
+function Getxmlcep(Doc: IXMLDocument): IXMLXmlcepType;
+begin
+  Result := Doc.GetDocBinding('xmlcep', TXMLXmlcepType, TargetNamespace) as IXMLXmlcepType;
+end;
+
+function Loadxmlcep(const FileName: string): IXMLXmlcepType;
+begin
+  Result := LoadXMLDocument(FileName).GetDocBinding('xmlcep', TXMLXmlcepType, TargetNamespace) as IXMLXmlcepType;
+end;
+
+function Newxmlcep: IXMLXmlcepType;
+begin
+  Result := NewXMLDocument.GetDocBinding('xmlcep', TXMLXmlcepType, TargetNamespace) as IXMLXmlcepType;
+end;
+
+procedure SalvarArquivo(FileName: string; Registro: IXMLXmlcepType);
+var
+  viXml: IXMLDocument;
+begin
+  viXml := TXMLDocument.Create(nil);
+  try
+    viXml.XML.Text := xmlDoc.FormatXMLData(Registro.XML);
+    viXml.Active   := True;
+    viXml.Version  := '1.0';
+    viXml.Encoding := 'UTF-8';
+    viXml.SaveToFile(FileName);
+  finally
+    viXml := nil;
+  end;
+end;
+
+{ TXMLXmlcepType }
+
+function TXMLXmlcepType.Get_Cep: Integer;
+begin
+  Result := ChildNodes['cep'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Cep(Value: Integer);
+begin
+  ChildNodes['cep'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Logradouro: Integer;
+begin
+  Result := ChildNodes['logradouro'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Logradouro(Value: Integer);
+begin
+  ChildNodes['logradouro'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Complemento: UnicodeString;
+begin
+  Result := ChildNodes['complemento'].Text;
+end;
+
+procedure TXMLXmlcepType.Set_Complemento(Value: UnicodeString);
+begin
+  ChildNodes['complemento'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Bairro: Integer;
+begin
+  Result := ChildNodes['bairro'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Bairro(Value: Integer);
+begin
+  ChildNodes['bairro'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Localidade: Integer;
+begin
+  Result := ChildNodes['localidade'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Localidade(Value: Integer);
+begin
+  ChildNodes['localidade'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Uf: Integer;
+begin
+  Result := ChildNodes['uf'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Uf(Value: Integer);
+begin
+  ChildNodes['uf'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Ibge: Integer;
+begin
+  Result := ChildNodes['ibge'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Ibge(Value: Integer);
+begin
+  ChildNodes['ibge'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Gia: UnicodeString;
+begin
+  Result := ChildNodes['gia'].Text;
+end;
+
+procedure TXMLXmlcepType.Set_Gia(Value: UnicodeString);
+begin
+  ChildNodes['gia'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Ddd: Integer;
+begin
+  Result := ChildNodes['ddd'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Ddd(Value: Integer);
+begin
+  ChildNodes['ddd'].NodeValue := Value;
+end;
+
+function TXMLXmlcepType.Get_Siafi: Integer;
+begin
+  Result := ChildNodes['siafi'].NodeValue;
+end;
+
+procedure TXMLXmlcepType.Set_Siafi(Value: Integer);
+begin
+  ChildNodes['siafi'].NodeValue := Value;
+end;
+
+end.
