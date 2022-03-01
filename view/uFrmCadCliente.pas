@@ -66,7 +66,8 @@ uses
 //cxContainer,
 //cxEdit,
 //cxGroupBox,
-  uModelCliente;
+  uModelCliente, dxSkinOffice2007Black, dxSkinOffice2007Blue,
+  dxSkinOffice2007Green, dxSkinOffice2007Pink;
 
 type
   TfrmCadCliente = class(TForm)
@@ -217,7 +218,7 @@ begin
       edtBairro.Text     := viJson.values['bairro'].value;
       edtCidade.Text     := viJson.values['localidade'].value;
       mmComplemento.Lines.Add(viJson.values['complemento'].value);
-      cbEstado.Text      := viJson.values['uf'].value;
+      cbEstado.ItemIndex := cbEstado.Items.IndexOf(viJson.values['uf'].value);
     finally
        viJson := nil;
     end;
